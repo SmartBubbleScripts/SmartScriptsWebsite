@@ -1,11 +1,10 @@
-// src/app/api/verify-purchase/route.ts (Reverted to GET Handler for Polling)
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { inviteUserToRepo } from '@/lib/github';
-import { ObjectId, Collection } from 'mongodb'; // Removed Db import
+import { ObjectId, Collection } from 'mongodb';
 
-// Interfaces needed by this route
+// Interfaces
 interface OrderDocument {
   _id: ObjectId;
   orderId: string;
@@ -19,7 +18,6 @@ interface ProductDocument {
   githubRepo?: string /* other fields */;
 }
 
-// GET Handler: Checks status based on orderId query parameter, triggers invite if 'paid'
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const orderId = url.searchParams.get('orderId');
@@ -31,7 +29,8 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  let orderIdForLogging = orderId.substring(0, 8); // Short ID for logs
+  // Fixed: Changed 'let' to 'const' as it's not reassigned
+  const orderIdForLogging = orderId.substring(0, 8);
 
   try {
     const { db } = await connectToDatabase();
@@ -47,7 +46,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // If the background job marked it as 'paid', attempt the GitHub invite (only once)
     if (order.status === 'paid') {
       console.log(
         `VERIFY API [GET]: Order ${orderIdForLogging} is 'paid'. Attempting invite for ${order.githubUsername}.`
@@ -114,8 +112,6 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // If status is not 'paid', just return the current status
-    // console.log(`VERIFY API [GET]: Returning current status for Order ${orderIdForLogging}: ${order.status}`); // Reduce logging noise maybe
     return NextResponse.json({ status: order.status });
   } catch (error) {
     console.error(
@@ -137,9 +133,10 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Disallow POST for this route in this flow
+// Fixed: Added eslint disable comment ABOVE the POST function
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function POST(_req: NextRequest) {
-  console.log('VERIFY API: POST request received (Not Allowed)');
+  console.log('VERIFY API: POST request received (Not Allowed for this flow)');
   return NextResponse.json(
     { message: 'Method Not Allowed. Use GET to check status.' },
     { status: 405, headers: { Allow: 'GET' } }
