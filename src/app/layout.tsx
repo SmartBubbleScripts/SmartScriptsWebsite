@@ -6,6 +6,9 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { ScrollToTopButton } from '@/components/ScrollToTopButton';
 import '@rainbow-me/rainbowkit/styles.css';
+import Analytics from '@/components/Analytics';
+import { GA_MEASUREMENT_ID } from '@/lib/gtag';
+import { Suspense } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -53,6 +56,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en' suppressHydrationWarning>
+      <Suspense fallback={null}>
+        <Analytics gaId={GA_MEASUREMENT_ID} />
+      </Suspense>
       <body
         className={`${inter.className} bg-gradient-to-br from-indigo-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900 text-gray-900 dark:text-gray-100 flex flex-col min-h-screen`}
       >
