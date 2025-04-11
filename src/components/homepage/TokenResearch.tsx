@@ -1,4 +1,3 @@
-// src/components/homepage/TokenResearch.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -8,7 +7,7 @@ import {
   isAddress,
   formatUnits,
   zeroAddress,
-} from 'viem'; // Removed unused Abi
+} from 'viem';
 import { bsc } from 'viem/chains';
 import {
   FiCheckCircle,

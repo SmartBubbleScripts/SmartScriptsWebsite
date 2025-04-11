@@ -1,7 +1,6 @@
-// src/components/ProductCard.tsx (Fixed ESLint Errors - Full Version)
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react'; // Import useCallback
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { Product } from '@/types/product';
 import { useAccount, useSendTransaction, useSwitchChain } from 'wagmi';
@@ -9,7 +8,6 @@ import { bsc } from 'wagmi/chains';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { parseEther } from 'viem';
 
-// Interfaces
 interface ProductCardProps {
   product: Product;
   isExpanded: boolean;
@@ -45,7 +43,6 @@ export default function ProductCard({
   isExpanded,
   onToggleDetails,
 }: ProductCardProps) {
-  // State Variables
   const [githubUsername, setGithubUsername] = useState<string>('');
   const [uiError, setUiError] = useState<string | null>(null);
   const [uiLoading, setUiLoading] = useState(false);
@@ -53,7 +50,6 @@ export default function ProductCard({
   const [currentTxHash, setCurrentTxHash] = useState<string | null>(null);
   const [currentStatus, setCurrentStatus] = useState<CardStatus>('idle');
 
-  // Hooks
   const { address, isConnected, chain } = useAccount();
   const { switchChain } = useSwitchChain();
   const { openConnectModal } = useConnectModal();
@@ -67,18 +63,16 @@ export default function ProductCard({
     reset: resetSendTransaction,
   } = useSendTransaction();
 
-  // Constants
   const targetChainId = bsc.id;
   const targetChainName = bsc.name;
 
-  // Utility Functions wrapped in useCallback
   const stopPolling = useCallback(() => {
     if (pollIntervalRef.current) {
       clearInterval(pollIntervalRef.current);
       pollIntervalRef.current = null;
       console.log('Polling stopped.');
     }
-  }, []); // No dependencies needed
+  }, []);
 
   const startPollingStatus = useCallback(
     (orderId: string) => {
@@ -102,7 +96,7 @@ export default function ProductCard({
             'not_found',
             'error',
           ];
-          // Only update if status changed or is final to prevent loops if component re-renders during poll
+
           setCurrentStatus((prevStatus) => {
             if (
               prevStatus !== data.status ||
@@ -127,7 +121,6 @@ export default function ProductCard({
             }
           }
         } catch (error) {
-          // Fixed: Catch error handling (Line 299 context)
           console.error('Polling fetch error:', error);
           const message =
             error instanceof Error ? error.message : 'Polling check failed';
@@ -142,16 +135,14 @@ export default function ProductCard({
       poll();
     },
     [stopPolling]
-  ); // Added stopPolling dependency
+  );
 
-  // Effect for cleanup on unmount
   useEffect(() => {
     return () => {
       stopPolling();
     };
-  }, [stopPolling]); // Fixed: Added missing dependency
+  }, [stopPolling]);
 
-  // Main purchase handler
   const handlePurchase = async () => {
     setUiError(null);
     setCurrentOrderId(null);
@@ -185,7 +176,6 @@ export default function ProductCard({
     setCurrentStatus('initiating_order');
     let orderDetails: InitiatePurchaseResponse | null = null;
     try {
-      // Initiate Purchase Try block
       console.log('Calling initiate-purchase...');
       const res = await fetch('/api/initiate-purchase', {
         method: 'POST',
@@ -198,7 +188,6 @@ export default function ProductCard({
       setCurrentOrderId(orderDetails.orderId);
       console.log('Order initiated:', orderDetails.orderId);
     } catch (error) {
-      // Fixed: Catch error handling (Line 148 context)
       console.error('Initiate purchase API error:', error);
       const message =
         error instanceof Error ? error.message : 'Failed to initiate order.';
@@ -209,7 +198,6 @@ export default function ProductCard({
     }
     if (orderDetails) {
       try {
-        // Send Transaction Try block
         console.log(`Sending tx for order ${orderDetails.orderId}...`);
         const valueInWei = parseEther(orderDetails.bnbAmount.toString());
         setCurrentStatus('waiting_wallet_approval');
@@ -219,7 +207,6 @@ export default function ProductCard({
           chainId: targetChainId,
         });
       } catch (error) {
-        // Fixed: Catch error handling
         const message =
           error instanceof Error
             ? error.message
@@ -236,16 +223,12 @@ export default function ProductCard({
     }
   };
 
-  // Effect Hook to watch Wagmi's useSendTransaction status AND trigger verification flow
   useEffect(() => {
-    // Stop loading indicator if no longer sending/storing/polling
     if (!isTxSending && !['storing_tx', 'polling'].includes(currentStatus)) {
       setUiLoading(false);
     }
 
-    // Handle transaction submission errors (e.g., user rejection)
     if (txSubmitError) {
-      // Fixed: Use instanceof Error safely for txSubmitError message (Line 233 context)
       const message =
         txSubmitError instanceof Error
           ? txSubmitError.message
@@ -259,7 +242,6 @@ export default function ProductCard({
       setUiLoading(false);
     }
 
-    // Handle successful transaction submission -> Store Hash -> Start Polling
     if (
       isTxSuccess &&
       wagmiTxHash &&
@@ -291,20 +273,18 @@ export default function ProductCard({
             console.log(`Stored txHash for ${currentOrderId}`);
           }
           startPollingStatus(currentOrderId);
-        }) // Always start polling
+        })
         .catch((error) => {
-          // Fixed: Catch error handling (Line 198 context)
           console.error('Store txHash fetch error:', error);
           const message =
             error instanceof Error
               ? error.message
               : 'Failed to store transaction details.';
-          setUiError(message); // Show error
-          startPollingStatus(currentOrderId!); // Still start polling
+          setUiError(message);
+          startPollingStatus(currentOrderId!);
         });
-      resetSendTransaction(); // Reset wagmi state after handling
+      resetSendTransaction();
     }
-    // Fixed: Added startPollingStatus AND stopPolling to dependency array
   }, [
     isTxSending,
     isTxSuccess,
@@ -317,7 +297,6 @@ export default function ProductCard({
     stopPolling,
   ]);
 
-  // --- JSX Structure ---
   return (
     <div
       className={`border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-all flex flex-col ${
@@ -381,7 +360,7 @@ export default function ProductCard({
               <p className='text-sm text-gray-600 dark:text-gray-400 mb-4 whitespace-pre-wrap'>
                 {product.longDescription || 'No details.'}
               </p>
-              {/* --- Purchase Flow UI --- */}
+
               {currentStatus === 'idle' && (
                 <div className='flex flex-col space-y-2'>
                   {' '}

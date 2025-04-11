@@ -33,7 +33,7 @@ export function Navbar() {
   return (
     <nav
       className='sticky top-0 z-50 w-full
-                 bg-white/75 dark:bg-gray-900/75
+                 bg-white/60 dark:bg-gray-900/60
                  backdrop-blur-lg
                  border-b border-white/10 dark:border-gray-700/50
                  shadow-sm
@@ -77,7 +77,7 @@ export function Navbar() {
           <div className='flex-shrink-0 relative'>
             <button
               onClick={handleButtonClick}
-              className='px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 text-sm font-medium transition-colors shadow-sm'
+              className='px-4 py-2 bg-indigo-600 opacity-90 text-white rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-opacity-50 text-sm font-medium transition-colors shadow-sm'
               disabled={!openConnectModal && !isConnected}
             >
               {isConnected && address

@@ -1,9 +1,8 @@
-// src/providers/Web3Provider.tsx (Mainnet Only)
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import { WagmiProvider, createConfig, http } from 'wagmi';
-import { bsc } from 'wagmi/chains'; // Import only BSC Mainnet
+import { bsc } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   RainbowKitProvider,
@@ -12,13 +11,12 @@ import {
   darkTheme,
 } from '@rainbow-me/rainbowkit';
 
-// Only include BSC Mainnet
 const supportedChains = [bsc] as const;
 
 const projectId = process.env.NEXT_PUBLIC_WC_PROJECT_ID || '';
 
 const appInfo = {
-  appName: 'My Bot Store', // Update with your actual app name if needed
+  appName: 'My Bot Store',
 };
 
 if (!projectId && typeof window !== 'undefined') {
@@ -27,34 +25,28 @@ if (!projectId && typeof window !== 'undefined') {
   );
 }
 
-// Configure default wallets for the supported chains (only mainnet)
 const { wallets: defaultWalletGroups } = getDefaultWallets({
   appName: appInfo.appName,
   projectId: projectId,
   // @ts-expect-error Property 'chains' does not exist on type '{ appName: string; projectId: string; }'. It might still work.
-  chains: supportedChains, // Pass mainnet chain here
+  chains: supportedChains,
 });
 
 // Create connectors
 const connectors = connectorsForWallets(
   defaultWalletGroups,
-  // Optionally customize wallet groups if needed:
-  // [
-  //     ...defaultWalletGroups, // Keep default wallets
-  //     // Add other specific wallets if desired
-  // ],
+
   {
     projectId: projectId,
     appName: appInfo.appName,
   }
 );
 
-// Create Wagmi config targeting only BSC Mainnet
 export const wagmiConfig = createConfig({
   connectors,
-  chains: supportedChains, // Use mainnet-only chains array
+  chains: supportedChains,
   transports: {
-    [bsc.id]: http(), // Configure transport only for mainnet
+    [bsc.id]: http(),
   },
 });
 
@@ -70,7 +62,6 @@ export function Web3Provider({ children }: Web3ProviderProps) {
     setIsMounted(true);
   }, []);
 
-  // Prevent hydration mismatch by only rendering on client
   if (!isMounted) {
     return null;
   }
@@ -80,9 +71,8 @@ export function Web3Provider({ children }: Web3ProviderProps) {
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider
           modalSize='compact'
-          theme={darkTheme()} // Or your preferred theme
+          theme={darkTheme()}
           appInfo={appInfo}
-          // chains prop is not needed here as it's handled by WagmiProvider config
         >
           {children}
         </RainbowKitProvider>

@@ -1,8 +1,5 @@
-// src/types/product.ts
-// import { ObjectId } from 'mongodb'; // Use this if you pass ObjectId to frontend
-
 export interface Product {
-  _id: string; // Using string after converting from ObjectId in API
+  _id: string;
   name: string;
   slug: string;
   description: string;
@@ -12,9 +9,8 @@ export interface Product {
   type: string;
   tags: string[];
   status: string;
-  createdAt: string | Date; // API might send string, Date on server
-  updatedAt: string | Date; // API might send string, Date on server
+  createdAt: string | Date;
+  updatedAt: string | Date;
   format?: string;
   pageCount?: number;
-  // downloadUrl is intentionally excluded
 }

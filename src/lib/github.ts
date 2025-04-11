@@ -1,4 +1,3 @@
-// src/lib/github.ts (Fixed Errors)
 import { Octokit } from '@octokit/rest';
 
 export async function inviteUserToRepo(

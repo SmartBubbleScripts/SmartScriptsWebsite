@@ -1,11 +1,9 @@
-// src/components/homepage/SecurityFeature.tsx
 import React from 'react';
 import { FiShield } from 'react-icons/fi';
 
 export default function SecurityFeature() {
   return (
     <div className='bg-white p-6 rounded-lg shadow-md border border-gray-200 flex flex-col items-center text-center h-full'>
-      {/* Optional Icon Placeholder */}
       <div className='bg-indigo-100 rounded-full p-3 mb-4 inline-flex'>
         <FiShield className='w-8 h-8 text-indigo-600' />
       </div>

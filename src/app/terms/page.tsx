@@ -1,6 +1,16 @@
+import type { Metadata } from 'next';
+
 const TELEGRAM_CONTACT_LINK = 'https://t.me/SmartScriptsBubble';
 const COMPANY_NAME = 'Smart Scripts Automations';
 const EFFECTIVE_DATE = 'April 1, 2024';
+
+export const metadata: Metadata = {
+  title: 'Terms of Service',
+  description: `Read the Terms of Service for using ${COMPANY_NAME} scripts and services. Effective ${EFFECTIVE_DATE}.`,
+  alternates: {
+    canonical: 'https://bubblepy.com/terms',
+  },
+};
 
 export default function TermsPage() {
   return (
@@ -106,7 +116,6 @@ export default function TermsPage() {
         </p>
 
         <h2>7. Disclaimers and Assumption of Risk</h2>
-        {/* KEEP THIS SECTION - IT IS VERY IMPORTANT */}
         <ul>
           <li>
             <strong>No Warranty:</strong> While we state our Scripts are tested
@@ -185,7 +194,6 @@ export default function TermsPage() {
 
         <h2>12. Governing Law</h2>
         <p>
-          {/* VERIFY THIS JURISDICTION IS CORRECT FOR YOU! */}
           These Terms shall be governed and construed in accordance with the
           laws of the State of Delaware, USA, without regard to its conflict of
           law provisions.
